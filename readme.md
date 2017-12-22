@@ -1,6 +1,6 @@
 
+<h1 align = "center">此项目为Laravel学习的第一个入门项目</h1>
 <p align="center">
-# 此项目为Laravel学习的第一个入门项目
 
 教程：<a href="https://fsdhub.com/books/laravel-essential-training-5.5">Laravel 教程 - Web 开发实战入门 ( Laravel 5.5 )</a>
 
