@@ -1,58 +1,111 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
 <p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
+此项目为Laravel学习的第一个入门项目
+
+教程：<a href="https://fsdhub.com/books/laravel-essential-training-5.5">Laravel 教程 - Web 开发实战入门 ( Laravel 5.5 )</a>
+
+开发平台：Mac
+
+运行环境：Homestead
 </p>
 
-## About Laravel
+通过本项目的学习，主要对Laravel项目开发流程有了熟悉，以下是个人对Laravel项目最简开发过程的总结：
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+##1.New project
+```java
+composer create-project laravel/laravel sample --prefer-dist -vvv
+```
+##2.Set project
+Edit .env file
+```java
+DB_DATABASE=db_name
+```
+Edit hosts file
+```java
+Add 192.168.10.10   project_name.test to etc\hosts
+```
+Edit Homestead.yaml file
+```java
+Add
+  - map: project_name.test
+  to: /home/vagrant/Code/project_name/public
+to sites
+Add
+  - project_db_name
+to databases
+```
+Then reload Homestead
+```java
+vagrant provision && vagrant reload
+```
+##3.Generate app key(Sometimes it will be init auto)
+```java
+php artisan key:generate
+```
+##4.Create db
+```java
+//database/migrations/[timestamp]_create_users_table.php
+php artisan make:migration create_users_table --create="users"
+php artisan migrate
+```
+##5.Create Model
+```java
+mkdir app/Models
+php artisan make:model Models/User
+```
+##6.Create controller and create route action
+```java
+php artisan make:controller UsersController
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+public function index()
+{
+  $users = User::paginate(10);
+  //跳转到resources/views/users/index_blade.php,参数users
+  return view('users.index', compact('users'));
+}
+```
+##7.Create route view
+```java
+resources/views/users/create.blade.php
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of any modern web application framework, making it a breeze to get started learning the framework.
-
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 1100 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](http://patreon.com/taylorotwell):
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Pulse Storm](http://www.pulsestorm.net/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+@foreach ($users as $user)
+  {{ $user->name }}
+@endforeach
+```
+##8.Optimize view style
+```java
+1.Install bootstrap
+yarn install --no-bin-links
+2.Edit app.scss
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+3.Build app.scss
+npm run dev
+npm run watch-poll
+4.Import style
+<link rel="stylesheet" href="/css/app.css">
+```
+##9.Set routes
+```java
+//显示所有
+//对应controller方法:index()
+Route::get('/users', 'UsersController@index')->name('users.index');
+//显示详情
+//对应controller方法:show(User $user)
+Route::get('/users/{user}', 'UsersController@show')->name('users.show');
+//创建信息的页面
+//对应Controller方法:create()
+Route::get('/users/create', 'UsersController@create')->name('users.create');
+//创建操作
+//对应Controller方法:store(Request $request)
+Route::post('/users', 'UsersController@store')->name('users.store');
+//编辑信息的页面
+//对应Controller方法:edit(User $user)
+Route::get('/users/{user}/edit', 'UsersController@edit')->name('users.edit');
+//更新操作
+//对应Controller方法:update(User $user, Request $request)
+Route::patch('/users/{user}', 'UsersController@update')->name('users.update');
+//删除操作
+//对应Controller方法:destroy(User $user)
+Route::delete('/users/{user}', 'UsersController@destroy')->name('users.destroy');
+```
+##Join it!
