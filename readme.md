@@ -1,6 +1,6 @@
 
 <p align="center">
-此项目为Laravel学习的第一个入门项目
+#此项目为Laravel学习的第一个入门项目
 
 教程：<a href="https://fsdhub.com/books/laravel-essential-training-5.5">Laravel 教程 - Web 开发实战入门 ( Laravel 5.5 )</a>
 
@@ -10,6 +10,7 @@
 </p>
 
 通过本项目的学习，主要对Laravel项目开发流程有了熟悉，以下是个人对Laravel项目最简开发过程的总结：
+
 
 ##1.New project
 ```java
